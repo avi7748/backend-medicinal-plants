@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GPS Sender</title>
+</head>
+<body>
+
+<h2>📍 GPS Sender</h2>
+<button onclick="startGPS()">Start GPS</button>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+<script>
+  const socket = io("http://YOUR-IP:5000");
+
+  function startGPS() {
+    navigator.geolocation.watchPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        socket.emit("save_plant_location", {
+          lat: lat,
+          lng: lng,
+          source: "mobile"
+        });
+
+        console.log("📍 SENT:", lat, lng);
+      },
+      (err) => {
+        alert("GPS Error: " + err.message);
+        console.log(err);
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000
+      }
+    );
+  }
+</script>
+
+</body>
+</html>
